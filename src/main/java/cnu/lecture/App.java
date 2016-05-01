@@ -6,6 +6,7 @@ import java.io.IOException;
  * Hello world!
  *
  */
+
 public class App {
     public static void main( String[] args ) throws IOException {
         final String apiKey = args[0];
@@ -22,3 +23,4 @@ public class App {
         querier.queryGameKey(summonerName);
     }
 }
+

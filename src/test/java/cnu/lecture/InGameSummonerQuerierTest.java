@@ -26,7 +26,7 @@ public class InGameSummonerQuerierTest {
         final String summonerName;
 
         GIVEN: {
-            summonerName = "akane24";
+            summonerName = "lol010lol";
         }
 
         final String actualGameKey;
@@ -34,9 +34,10 @@ public class InGameSummonerQuerierTest {
             actualGameKey = querier.queryGameKey(summonerName);
         }
 
-        final String expectedGameKey = "4/bl4DC8HBir8w7bGHq6hvuHluBd+3xM";
+        final String expectedGameKey = "gJKxSLuVw8He0uj9wdyI9DAoDnpkgc00";
         THEN: {
             assertThat(actualGameKey, is(expectedGameKey));
+            
         }
     }
 }

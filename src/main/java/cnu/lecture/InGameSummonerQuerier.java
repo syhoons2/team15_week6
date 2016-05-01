@@ -34,7 +34,7 @@ public class InGameSummonerQuerier {
 
     public String queryGameKey(String summonerName) throws IOException {
        
-        HttpClient client = HttpClientBuilder.create().build();
+    	HttpClient client = HttpClientBuilder.create().build();
 
         /////////////////복잡하게 나열된 것들 정리////////////////////////////
         String summonerId = summonerIdReceive(summonerName, client); //여기까지는 널포인터와 관련 없는 듯(?)
@@ -48,6 +48,8 @@ public class InGameSummonerQuerier {
 
         return gameInfo.getObservers().getEncryptionKey();
     }
+    
+    
 
     public String summonerIdReceive(String summonerName, HttpClient client) throws ClientProtocolException, IOException{
        
@@ -61,11 +63,11 @@ public class InGameSummonerQuerier {
        }
     
     public InGameInfo inGameInfoReceive(String summonerId, HttpClient client) throws ClientProtocolException, IOException {
-       
-       HttpUriRequest inGameRequest = buildObserverHttpRequest(summonerId);
-       HttpResponse inGameResponse = client.execute(inGameRequest);
-       Gson inGameGson = new Gson();
-       InGameInfo gameInfo = inGameGson.fromJson(new JsonReader(new InputStreamReader(inGameResponse.getEntity().getContent())), InGameInfo.class);
+    	HttpClient clients = HttpClientBuilder.create().build();
+        HttpUriRequest inGameRequest = buildObserverHttpRequest(summonerId);
+        HttpResponse inGameResponse = clients.execute(inGameRequest);
+        Gson inGameGson = new Gson();
+        InGameInfo gameInfo = inGameGson.fromJson(new JsonReader(new InputStreamReader(inGameResponse.getEntity().getContent())), InGameInfo.class);
        
        return gameInfo;
        }

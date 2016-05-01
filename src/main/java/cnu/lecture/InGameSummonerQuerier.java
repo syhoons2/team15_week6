@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -32,20 +33,13 @@ public class InGameSummonerQuerier {
     }
 
     public String queryGameKey(String summonerName) throws IOException {
+       
         HttpClient client = HttpClientBuilder.create().build();
 
-        HttpUriRequest summonerRequest = buildApiHttpRequest(summonerName);
-        HttpResponse summonerResponse = client.execute(summonerRequest);
-        Gson summonerInfoGson = new Gson();
-        Type mapType = new TypeToken<HashMap<String, SummonerInfo>>(){}.getType();
-        HashMap<String, SummonerInfo> entries = summonerInfoGson.fromJson(new JsonReader(new InputStreamReader(summonerResponse.getEntity().getContent())), mapType);
-        String summonerId = entries.get(summonerName).getId();
-
-        HttpUriRequest inGameRequest = buildObserverHttpRequest(summonerId);
-        HttpResponse inGameResponse = client.execute(inGameRequest);
-        Gson inGameGson = new Gson();
-        InGameInfo gameInfo = inGameGson.fromJson(new JsonReader(new InputStreamReader(inGameResponse.getEntity().getContent())), InGameInfo.class);
-       
+        /////////////////복잡하게 나열된 것들 정리////////////////////////////
+        String summonerId = summonerIdReceive(summonerName, client); //여기까지는 널포인터와 관련 없는 듯(?)
+        InGameInfo gameInfo = inGameInfoReceive(summonerId, client); //여기도??
+        /////////////////복잡하게 나열된 것들 정리////////////////////////////
         
         
         Arrays.asList(gameInfo.getParticipants()).forEach((InGameInfo.Participant participant) -> {
@@ -54,9 +48,29 @@ public class InGameSummonerQuerier {
 
         return gameInfo.getObservers().getEncryptionKey();
     }
-    
-    
 
+    public String summonerIdReceive(String summonerName, HttpClient client) throws ClientProtocolException, IOException{
+       
+       HttpUriRequest summonerRequest = buildApiHttpRequest(summonerName);
+       HttpResponse summonerResponse = client.execute(summonerRequest);
+       Gson summonerInfoGson = new Gson();
+       Type mapType = new TypeToken<HashMap<String, SummonerInfo>>(){}.getType();
+       HashMap<String, SummonerInfo> entries = summonerInfoGson.fromJson(new JsonReader(new InputStreamReader(summonerResponse.getEntity().getContent())), mapType);
+       String summonerId = entries.get(summonerName).getId();
+       return summonerId;
+       }
+    
+    public InGameInfo inGameInfoReceive(String summonerId, HttpClient client) throws ClientProtocolException, IOException {
+       
+       HttpUriRequest inGameRequest = buildObserverHttpRequest(summonerId);
+       HttpResponse inGameResponse = client.execute(inGameRequest);
+       Gson inGameGson = new Gson();
+       InGameInfo gameInfo = inGameGson.fromJson(new JsonReader(new InputStreamReader(inGameResponse.getEntity().getContent())), InGameInfo.class);
+       
+       return gameInfo;
+       }
+
+    
     private HttpUriRequest buildApiHttpRequest(String summonerName) throws UnsupportedEncodingException {
         String url = mergeWithApiKey(new StringBuilder()
                 .append("https://kr.api.pvp.net/api/lol/kr/v1.4/summoner/by-name/")
@@ -76,6 +90,4 @@ public class InGameSummonerQuerier {
     private StringBuilder mergeWithApiKey(StringBuilder builder) {
         return builder.append("?api_key=").append(apiKey);
     }
-    
-    
 }

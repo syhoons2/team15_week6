@@ -26,12 +26,14 @@ public class InGameSummonerQuerierTest {
         final String summonerName;
 
         GIVEN: {
-            summonerName = "akane24";
+            summonerName = "lol010lol";
         }
 
         final String actualGameKey;
+        
         WHEN: {
             actualGameKey = querier.queryGameKey(summonerName);
+            
         }
 
         final String expectedGameKey = "4/bl4DC8HBir8w7bGHq6hvuHluBd+3xM";

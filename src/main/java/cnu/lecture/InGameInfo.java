@@ -11,6 +11,12 @@ public class InGameInfo {
         @Getter @Setter
         private String encryptionKey;
     }
+    
+    @Getter @Setter
+    private Observer observers;
+
+    @Getter @Setter
+    private Participant[] participants;
 
     public static class Participant {
         @Getter @Setter
@@ -20,9 +26,4 @@ public class InGameInfo {
     @Getter @Setter
     private String platformId;
 
-    @Getter @Setter
-    private Observer observers;
-
-    @Getter @Setter
-    private Participant[] participants;
 }

@@ -45,13 +45,17 @@ public class InGameSummonerQuerier {
         HttpResponse inGameResponse = client.execute(inGameRequest);
         Gson inGameGson = new Gson();
         InGameInfo gameInfo = inGameGson.fromJson(new JsonReader(new InputStreamReader(inGameResponse.getEntity().getContent())), InGameInfo.class);
-
+       
+        
+        
         Arrays.asList(gameInfo.getParticipants()).forEach((InGameInfo.Participant participant) -> {
             listener.player(participant.getSummonerName());
         });
 
         return gameInfo.getObservers().getEncryptionKey();
     }
+    
+    
 
     private HttpUriRequest buildApiHttpRequest(String summonerName) throws UnsupportedEncodingException {
         String url = mergeWithApiKey(new StringBuilder()
@@ -72,4 +76,6 @@ public class InGameSummonerQuerier {
     private StringBuilder mergeWithApiKey(StringBuilder builder) {
         return builder.append("?api_key=").append(apiKey);
     }
+    
+    
 }
